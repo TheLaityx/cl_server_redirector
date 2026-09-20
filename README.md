@@ -9,14 +9,10 @@ DLL 模组请从 NexusMods 下载原版 `cl_server_redirector.dll`。
 
 | 文件 | 说明 |
 |------|------|
-| `server/server.py` | Python 私服服务端（公告、匹配本地拦截、反向代理兼容） |
+| `server/server.py` | Python 私服服务端（公告、匹配本地拦截） |
 | `server/su-server.service` | systemd 服务配置（自动启动/守护） |
 | `server/DEPLOY.md` | Python 服务端部署文档 |
-| `nginx-nightreign-http.conf` | Nginx HTTP 反向代理配置 |
-| `nginx-nightreign-https.conf` | Nginx HTTPS 反向代理配置（可选） |
-| `setup_reverse_proxy.md` | 反向代理 + 域名部署教程 |
 | `cl_server_redirector.ini` | 客户端模组配置模板（修改 `CL_SERVER_URL` 为你的地址） |
-| `公告.txt` | 游戏内公告内容参考 |
 
 ## 快速开始
 
@@ -54,7 +50,6 @@ systemctl status su-server   # 应显示 active (running)
 
 **防火墙/安全组：**
 - 放行 TCP **10901** 端口（或你自定义的端口）
-- 如果用了 Nginx 反向代理，则只放行 80/443，服务端改绑 `127.0.0.1`
 
 ### 2. 配置客户端模组
 
@@ -71,7 +66,7 @@ CL_USE_ALT_SAVE=true
 
 ### 3. 域名 + HTTPS（可选）
 
-参考 `setup_reverse_proxy.md` 配置 Nginx 反向代理 + SSL 证书。
+可自行配置 Nginx 反向代理 + SSL 证书，服务端改绑 `127.0.0.1`。
 
 ## 如何修改游戏内公告
 
@@ -99,7 +94,7 @@ import base64
 base64.b64encode(b'<p>你的公告内容</p>').decode()
 ```
 
-支持 HTML 标签：`<p>`、`<br>`、`<font>` 等。`公告.txt` 里有完整示例。
+支持 HTML 标签：`<p>`、`<br>`、`<font>` 等。
 
 ## 免责声明
 
