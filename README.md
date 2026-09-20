@@ -20,10 +20,70 @@ DLL 模组请从 NexusMods 下载原版 `cl_server_redirector.dll`。
 
 ## 快速开始
 
-1. 下载原版模组 `cl_server_redirector.dll`
-2. 修改 `cl_server_redirector.ini` 中的 `CL_SERVER_URL` 为你的服务器地址
-3. 参考 `server/DEPLOY.md` 部署 Python 服务端
-4. 如需域名 + HTTPS，参考 `setup_reverse_proxy.md`
+### 1. 部署 Python 服务端
+
+需要一台 Linux 服务器（Ubuntu/Debian 等），Python 3 已安装。
+
+```bash
+# 1. 上传 server.py 到服务器（本机执行）
+scp server/server.py root@你的服务器IP:/root/
+
+# 2. 服务器上启动（前台测试）
+python3 /root/server.py --host 0.0.0.0 --port 10901 --selfhosted
+
+# 3. 验证启动成功（另开窗口）
+curl http://你的服务器IP:10901/client/capabilities?steam_id=test
+# 应返回 JSON
+```
+
+**后台常驻（systemd）：**
+
+创建 `/etc/systemd/system/nightreign-server.service`：
+
+```ini
+[Unit]
+Description=Nightreign Private Server
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/root
+ExecStart=/usr/bin/python3 /root/server.py --host 0.0.0.0 --port 10901 --selfhosted
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target
+```
+
+然后启用：
+
+```bash
+systemctl daemon-reload
+systemctl enable --now nightreign-server
+systemctl status nightreign-server   # 应显示 active (running)
+```
+
+**防火墙/安全组：**
+- 放行 TCP **10901** 端口（或你自定义的端口）
+- 如果用了 Nginx 反向代理，则只放行 80/443，服务端改绑 `127.0.0.1`
+
+### 2. 配置客户端模组
+
+下载原版模组 `cl_server_redirector.dll`，放到游戏目录，修改同目录的 `cl_server_redirector.ini`：
+
+```ini
+[cl_server_redirector]
+CL_SERVER_URL=http://你的服务器IP:10901
+CL_CUSTOM_SHARD_NAME=你的Shard名
+CL_USE_ALT_SAVE=true
+```
+
+所有联机玩家必须使用**相同的 `CL_CUSTOM_SHARD_NAME`**，否则互相匹配不到。
+
+### 3. 域名 + HTTPS（可选）
+
+参考 `setup_reverse_proxy.md` 配置 Nginx 反向代理 + SSL 证书。
 
 ## 如何修改游戏内公告
 
