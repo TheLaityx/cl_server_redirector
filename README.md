@@ -38,31 +38,19 @@ curl http://你的服务器IP:10901/client/capabilities?steam_id=test
 
 **后台常驻（systemd）：**
 
-创建 `/etc/systemd/system/nightreign-server.service`：
-
-```ini
-[Unit]
-Description=Nightreign Private Server
-After=network.target
-
-[Service]
-Type=simple
-WorkingDirectory=/root
-ExecStart=/usr/bin/python3 /root/server.py --host 0.0.0.0 --port 10901 --selfhosted
-Restart=always
-RestartSec=3
-
-[Install]
-WantedBy=multi-user.target
-```
-
-然后启用：
+仓库里已提供 `server/su-server.service`，上传到服务器后启用：
 
 ```bash
+# 上传
+scp server/su-server.service root@你的服务器IP:/etc/systemd/system/
+
+# 服务器上启用
 systemctl daemon-reload
-systemctl enable --now nightreign-server
-systemctl status nightreign-server   # 应显示 active (running)
+systemctl enable --now su-server
+systemctl status su-server   # 应显示 active (running)
 ```
+
+> 默认配置为 `--proxy` 学习代理模式。如需 `--selfhosted` 纯私服模式，编辑 `/etc/systemd/system/su-server.service` 修改 `ExecStart` 参数。
 
 **防火墙/安全组：**
 - 放行 TCP **10901** 端口（或你自定义的端口）
