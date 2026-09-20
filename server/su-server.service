@@ -1,0 +1,16 @@
+[Unit]
+Description=SU Nightreign private server (server.py)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/root
+# 纯代理模式：所有请求转发 fs-emu，本地只抓包学习协议。
+# SU 客户端取到真实 Steam 票据后，fs-emu 会像对待 CL 一样放行。
+ExecStart=/usr/bin/python3 -u /root/server.py --port 10901 --proxy https://nightreign.fs-emu.net
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target

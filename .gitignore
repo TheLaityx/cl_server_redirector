@@ -1,0 +1,27 @@
+.workbuddy/
+*.log
+requests.log
+
+# Python
+__pycache__/
+*.py[cod]
+
+# Build artifacts
+*.exe
+*.dll
+
+# Backup files
+*副本*
+*备份*
+*_restored.*
+*.b64
+*.txt
+!公告.txt
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
